@@ -1,25 +1,26 @@
 // GENERATED CODE - DO NOT MODIFY BY HAND
 
-part of 'sign_up_repository.dart';
+part of 'login_controller.dart';
 
 // **************************************************************************
 // RiverpodGenerator
 // **************************************************************************
 
-String _$signUpRepositoryHash() => r'7fd9b2cff6fc6855aade047ecd2570aa5907f281';
+String _$loginControllerHash() => r'1934c74bc6b2ce738d2969b33cd6d18bc95b281e';
 
-/// See also [signUpRepository].
-@ProviderFor(signUpRepository)
-final signUpRepositoryProvider = AutoDisposeProvider<SignUpRepository>.internal(
-  signUpRepository,
-  name: r'signUpRepositoryProvider',
+/// See also [LoginController].
+@ProviderFor(LoginController)
+final loginControllerProvider = AutoDisposeAsyncNotifierProvider<
+    LoginController, (LoginEntity?, String?)>.internal(
+  LoginController.new,
+  name: r'loginControllerProvider',
   debugGetCreateSourceHash: const bool.fromEnvironment('dart.vm.product')
       ? null
-      : _$signUpRepositoryHash,
+      : _$loginControllerHash,
   dependencies: null,
   allTransitiveDependencies: null,
 );
 
-typedef SignUpRepositoryRef = AutoDisposeProviderRef<SignUpRepository>;
+typedef _$LoginController = AutoDisposeAsyncNotifier<(LoginEntity?, String?)>;
 // ignore_for_file: type=lint
 // ignore_for_file: subtype_of_sealed_class, invalid_use_of_internal_member, invalid_use_of_visible_for_testing_member

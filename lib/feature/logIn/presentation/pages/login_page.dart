@@ -1,25 +1,83 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
-import 'package:chat_app/feature/signup/presentation/widgets/my_textfield.dart';
+import 'package:chat_app/feature/logIn/presentation/riverpod/login_controller.dart';
+import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
+import 'package:chat_app/feature/logIn/presentation/widgets/user_data.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
-class LoginPage extends StatefulWidget {
+class LoginPage extends ConsumerStatefulWidget {
   const LoginPage({super.key});
 
   @override
-  State<LoginPage> createState() => _LoginPageState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _LoginPageState();
 }
 
-class _LoginPageState extends State<LoginPage> {
+class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController _emailController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
-  final TextEditingController _confirmPasswordController =
-  TextEditingController();
-  final TextEditingController _userName = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool isButtonEnable = false;
+
+  ({
+    bool email,
+    bool password,
+  }) enableButtonNotifier = (email: false, password: false);
+
+  @override
+  void initState() {
+    super.initState();
+
+    _emailController.addListener(
+      () => updateEnableButtonNotifier(),
+    );
+
+    _passwordController.addListener(
+      () => updateEnableButtonNotifier(),
+    );
+  }
+
+  void updateEnableButtonNotifier() {
+    setState(() {
+      enableButtonNotifier = (
+        email: _emailController.value.text.isNotEmpty,
+        password: _passwordController.value.text.isNotEmpty,
+      );
+
+      isButtonEnable =
+          enableButtonNotifier.email && enableButtonNotifier.password;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
+    final state = ref.watch(loginControllerProvider);
+    ref.listen(loginControllerProvider, (_, next) {
+      if (next.value?.$1 == null && next.value?.$2 == null) {
+        const CircularProgressIndicator();
+      } else if (next.value?.$1 != null && next.value?.$2 == null) {
+        context.go(RoutesName.home);
+      } else if (next.value?.$1 == null && next.value?.$2 != null) {
+        showDialog(
+          context: context,
+          builder: (BuildContext context) {
+            return AlertDialog(
+              title: const Text('Error!'),
+              content: Text('${next.value?.$2}'),
+              actions: [
+                TextButton(
+                  onPressed: () {
+                    Navigator.of(context).pop();
+                  },
+                  child: const Text('OK'),
+                ),
+              ],
+            );
+          },
+        );
+      }
+    });
+
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       body: Center(
@@ -76,15 +134,27 @@ class _LoginPageState extends State<LoginPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 25, right: 25),
                 child: ElevatedButton(
-                  onPressed: () {
-                    if (_formKey.currentState!.validate()) {
-                      context.go(RoutesName.home);
-                    }
-                  },
+                  onPressed: (isButtonEnable)
+                      ? () {
+                          if (_formKey.currentState!.validate()) {
+                            ref.read(loginControllerProvider.notifier).login(
+                                  UserData(
+                                    email: _emailController.text,
+                                    pass: _passwordController.text,
+                                  ),
+                                );
+                          }
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
                     backgroundColor: Theme.of(context).colorScheme.secondary,
+                    minimumSize: const Size(double.infinity, 50),
                   ),
-                  child: const Text("LogIn"),
+                  child: state.isLoading
+                      ? const CircularProgressIndicator(
+                          backgroundColor: Colors.white10,
+                        )
+                      : Text('LogIn'),
                 ),
               ),
               const SizedBox(height: 25),
@@ -98,7 +168,7 @@ class _LoginPageState extends State<LoginPage> {
                     ),
                   ),
                   GestureDetector(
-                    onTap: (){
+                    onTap: () {
                       context.go(RoutesName.signup);
                     },
                     child: Text(
