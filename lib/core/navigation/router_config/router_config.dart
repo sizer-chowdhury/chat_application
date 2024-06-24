@@ -1,6 +1,6 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
 import 'package:chat_app/feature/home/home_page.dart';
-import 'package:chat_app/feature/logIn/login_page.dart';
+import 'package:chat_app/feature/logIn/presentation/pages/login_page.dart';
 import 'package:chat_app/feature/signup/presentation/pages/signup_page.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
