@@ -31,6 +31,7 @@ class SignUpRepositoryImp implements SignUpRepository {
         final saveUserInfo = <String, String>{
           'name': user.displayName ?? 'No Name',
           'email': user.email ?? 'No Email',
+          'status' : 'unavailable',
         };
         await db.collection('users').doc(user.uid).set(saveUserInfo);
       } catch (e) {
