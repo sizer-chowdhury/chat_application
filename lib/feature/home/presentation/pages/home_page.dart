@@ -1,3 +1,4 @@
+import 'package:chat_app/feature/home/presentation/widgets/drawer.dart';
 import 'package:chat_app/feature/home/presentation/widgets/user.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
@@ -17,15 +18,21 @@ class _HomeScreenState extends State<HomePage> {
       appBar: AppBar(
         title: Text('Home'),
         actions: [
-          IconButton(
-            icon: Icon(Icons.search),
-            onPressed: () {
-              showSearch(context: context, delegate: UserSearchDelegate());
-            },
+          Row(
+            children: [
+              IconButton(
+                icon: Icon(Icons.search),
+                onPressed: () {
+                  showSearch(context: context, delegate: UserSearchDelegate());
+                },
+              ),
+            ],
           ),
         ],
       ),
+      drawer: const MyDrawer(),
     );
+
   }
 }
 

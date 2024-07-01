@@ -71,7 +71,7 @@ class _ChatPageState extends State<ChatPage> {
         }
         return ListView(
           children:
-              snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
+          snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
         );
       },
     );
@@ -86,11 +86,11 @@ class _ChatPageState extends State<ChatPage> {
     String formattedTime = DateFormat.Hm().format(dateTime);
     return Column(
       crossAxisAlignment:
-          isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+      isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         ChatBubble(
           message:
-              data["imageUrl"] == null ? data["message"] : data["imageUrl"],
+          data["imageUrl"] == null ? data["message"] : data["imageUrl"],
           isCurrentUser: isCurrentUser,
           abc: formattedTime,
           type: data["imageUrl"] == null ? "message":"image",
@@ -113,18 +113,18 @@ class _ChatPageState extends State<ChatPage> {
               onPressed: () async {
                 ImagePicker imagePicker = ImagePicker();
                 XFile? file =
-                    await imagePicker.pickImage(source: ImageSource.gallery);
+                await imagePicker.pickImage(source: ImageSource.gallery);
                 print('here: ${file?.path}');
 
                 if (file == null) return;
 
                 String fileName =
-                    DateTime.now().microsecondsSinceEpoch.toString();
+                DateTime.now().microsecondsSinceEpoch.toString();
 
                 Reference referenceRoot = FirebaseStorage.instance.ref();
                 Reference referenceDirImages = referenceRoot.child('images');
                 Reference referenceImageToUpload =
-                    referenceDirImages.child(fileName);
+                referenceDirImages.child(fileName);
 
                 try {
                   await referenceImageToUpload.putFile(File(file.path));
