@@ -1,7 +1,7 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
+import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/feature/signup/presentation/riverpod/sign_up_controller.dart';
 import 'package:chat_app/feature/signup/presentation/widgets/my_textfield.dart';
-import 'package:chat_app/feature/signup/presentation/widgets/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
