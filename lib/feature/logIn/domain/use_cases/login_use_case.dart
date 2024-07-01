@@ -1,6 +1,6 @@
+import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/feature/logIn/domain/entities/login_entity.dart';
 import 'package:chat_app/feature/logIn/domain/repositories/login_repository.dart';
-import 'package:chat_app/feature/logIn/presentation/widgets/user_data.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
 
 part 'login_use_case.g.dart';
