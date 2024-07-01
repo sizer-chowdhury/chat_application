@@ -2,17 +2,20 @@ import 'package:chat_app/core/navigation/routes/routes_name.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:image_picker/image_picker.dart';
 
-class MyDrawer extends StatefulWidget {
+import '../riverpod/drawer_controller.dart';
+
+class MyDrawer extends ConsumerStatefulWidget {
   const MyDrawer({super.key});
 
   @override
-  State<MyDrawer> createState() => _MyDrawerState();
+  ConsumerState<ConsumerStatefulWidget> createState() => _MyDrawerState();
 }
 
-class _MyDrawerState extends State<MyDrawer> {
+class _MyDrawerState extends ConsumerState<MyDrawer> {
   User? user;
   String? imageUrl;
   bool isActive = true;
@@ -20,6 +23,14 @@ class _MyDrawerState extends State<MyDrawer> {
   FirebaseAuth auth = FirebaseAuth.instance;
   String? photoLink =
       'https://letsenhance.io/static/8f5e523ee6b2479e26ecc91b9c25261e/1015f/MainAfter.jpg';
+
+  @override
+  void initState() {
+    super.initState();
+    Future(() {
+      ref.read(myDrawerControllerProvider.notifier).myDrawer();
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -35,7 +46,7 @@ class _MyDrawerState extends State<MyDrawer> {
                   height: 100,
                   width: 100,
                   child: CircleAvatar(
-                    // backgroundImage: NetworkImage(photoLink!),
+                     backgroundImage: NetworkImage(photoLink!),
                     radius: 20,
                   ),
                 ),
@@ -107,6 +118,5 @@ class _MyDrawerState extends State<MyDrawer> {
     if (image == null) {
       return null;
     }
-
   }
 }
