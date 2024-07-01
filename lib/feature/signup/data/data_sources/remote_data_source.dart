@@ -1,5 +1,6 @@
 import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/feature/signup/data/models/sign_up_model.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:riverpod_annotation/riverpod_annotation.dart';
@@ -37,5 +38,18 @@ class SignUpRemoteDataSource {
       return (null, e.toString());
     }
     return (null, null);
+  }
+
+  void saveUserInfo({
+    required Map<String, dynamic> userMappedData,
+    required String collection,
+    required String uid,
+  }) async {
+    final db = FirebaseFirestore.instance;
+    try {
+      await db.collection(collection).doc(uid).set(userMappedData);
+    } catch (e) {
+      throw Exception(e);
+    }
   }
 }
