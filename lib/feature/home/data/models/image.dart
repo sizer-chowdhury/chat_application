@@ -1,17 +1,17 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 
-class Message {
+class Image {
   final String senderID;
   final String senderEmail;
   final String receiverID;
-  final String message;
+  final String imageUrl;
   final Timestamp timestamp;
 
-  Message({
+  Image({
     required this.senderID,
     required this.senderEmail,
     required this.receiverID,
-    required this.message,
+    required this.imageUrl,
     required this.timestamp,
   });
 
@@ -20,7 +20,7 @@ class Message {
       'senderID': senderID,
       'senderEmail': senderEmail,
       'receiverID': receiverID,
-      'message': message,
+      'imageUrl': imageUrl,
       'timestamp': timestamp,
     };
   }

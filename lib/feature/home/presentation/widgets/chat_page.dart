@@ -1,9 +1,13 @@
+import 'dart:io';
+
 import 'package:chat_app/feature/home/presentation/widgets/chat_bubble.dart';
 import 'package:chat_app/feature/home/presentation/widgets/chat_service.dart';
 import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
+import 'package:firebase_storage/firebase_storage.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
 import 'package:intl/intl.dart';
 
 class ChatPage extends StatefulWidget {
@@ -23,6 +27,7 @@ class _ChatPageState extends State<ChatPage> {
 
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
+  String imageUrl = '';
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -30,6 +35,11 @@ class _ChatPageState extends State<ChatPage> {
           widget.receiverID, _messageController.text);
       _messageController.clear();
     }
+  }
+
+  void sendImage() async {
+    print("send message");
+    await _chatService.sendImage(widget.receiverID, imageUrl);
   }
 
   @override
@@ -79,19 +89,55 @@ class _ChatPageState extends State<ChatPage> {
           isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         ChatBubble(
-          message: data["message"],
+          message:
+              data["imageUrl"] == null ? data["message"] : data["imageUrl"],
           isCurrentUser: isCurrentUser,
           abc: formattedTime,
-        )
+          type: data["imageUrl"] == null ? "message":"image",
+        ),
       ],
     );
   }
 
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 50, right: 10),
+      padding: const EdgeInsets.only(bottom: 50, right: 10, left: 10),
       child: Row(
         children: [
+          Container(
+            decoration: BoxDecoration(
+              color: Colors.green,
+              shape: BoxShape.circle,
+            ),
+            child: IconButton(
+              onPressed: () async {
+                ImagePicker imagePicker = ImagePicker();
+                XFile? file =
+                    await imagePicker.pickImage(source: ImageSource.gallery);
+                print('here: ${file?.path}');
+
+                if (file == null) return;
+
+                String fileName =
+                    DateTime.now().microsecondsSinceEpoch.toString();
+
+                Reference referenceRoot = FirebaseStorage.instance.ref();
+                Reference referenceDirImages = referenceRoot.child('images');
+                Reference referenceImageToUpload =
+                    referenceDirImages.child(fileName);
+
+                try {
+                  await referenceImageToUpload.putFile(File(file.path));
+                  imageUrl = await referenceImageToUpload.getDownloadURL();
+                } catch (error) {}
+                sendImage();
+              },
+              icon: Icon(
+                Icons.image,
+                color: Colors.white,
+              ),
+            ),
+          ),
           Expanded(
             child: MyTextfield(
               controller: _messageController,

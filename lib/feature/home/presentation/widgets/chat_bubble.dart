@@ -4,12 +4,14 @@ class ChatBubble extends StatelessWidget {
   final String message;
   final bool isCurrentUser;
   final String abc;
+  final String type;
 
   const ChatBubble({
     super.key,
     required this.message,
     required this.isCurrentUser,
     required this.abc,
+    required this.type
   });
 
   @override
@@ -24,7 +26,7 @@ class ChatBubble extends StatelessWidget {
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          Text(message),
+          type=="message"?Text(message):Image.network(message),
           SizedBox(height: 5),
           Text(abc),
         ],

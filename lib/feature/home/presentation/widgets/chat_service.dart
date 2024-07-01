@@ -1,3 +1,4 @@
+import 'package:chat_app/feature/home/data/models/image.dart';
 import 'package:chat_app/feature/home/data/models/message.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -45,5 +46,33 @@ class ChatService {
         .collection("message")
         .orderBy("timestamp", descending: false)
         .snapshots();
+  }
+
+  Future<void> sendImage(String receiverID, imageUrl) async {
+    print("coming here baby:");
+    final String currentUserID = _auth.currentUser!.uid;
+    final String currentUserEmail = _auth.currentUser!.email!;
+    final Timestamp timestamp = Timestamp.now();
+    DateTime dateTime = timestamp.toDate();
+    String formattedTime = DateFormat.Hm().format(dateTime);
+    // print("here: ${formattedTime}");
+
+    Image newImage = Image(
+      senderID: currentUserID,
+      senderEmail: currentUserEmail,
+      receiverID: receiverID,
+      imageUrl: imageUrl,
+      timestamp: timestamp,
+    );
+
+    List<String> ids = [currentUserID, receiverID];
+    ids.sort();
+    String chatRoomID = ids.join('_');
+
+    await _firestore
+        .collection("chat_rooms")
+        .doc(chatRoomID)
+        .collection("message")
+        .add(newImage.toMap());
   }
 }

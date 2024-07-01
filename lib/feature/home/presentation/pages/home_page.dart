@@ -73,8 +73,8 @@ class UserSearchDelegate extends SearchDelegate<User> {
           .where('name', isLessThanOrEqualTo: query + '\uf8ff')
           .snapshots()
           .map((querySnapshot) => querySnapshot.docs
-              .map((doc) => User.fromFirestore(doc))
-              .toList()),
+          .map((doc) => User.fromFirestore(doc))
+          .toList()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
