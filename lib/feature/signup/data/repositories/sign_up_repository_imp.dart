@@ -28,12 +28,11 @@ class SignUpRepositoryImp implements SignUpRepository {
         await user.reload();
         user = auth.currentUser!;
 
-        final saveUserInfo = <String, String>{
-          'name': user.displayName ?? 'No Name',
-          'email': user.email ?? 'No Email',
-          'status' : 'unavailable',
-        };
-        await db.collection('users').doc(user.uid).set(saveUserInfo);
+        signUpRemoteDataSource.saveUserInfo(
+          userMappedData: SignUpModel.toMap(user: user),
+          collection: 'users',
+          uid: user.uid,
+        );
       } catch (e) {
         return (null, e.toString());
       }
