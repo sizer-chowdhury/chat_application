@@ -1,12 +1,17 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
-import 'package:chat_app/feature/home/home_page.dart';
+import 'package:chat_app/feature/home/presentation/pages/home_page.dart';
 import 'package:chat_app/feature/logIn/presentation/pages/login_page.dart';
 import 'package:chat_app/feature/signup/presentation/pages/signup_page.dart';
+import 'package:firebase_core/firebase_core.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 
 class MyRouterConfig {
   static GoRouter router = GoRouter(
+    // initialLocation: (FirebaseAuth.instance.currentUser == null)
+    //     ? RoutesName.login
+    //     : RoutesName.home,
     initialLocation: RoutesName.login,
     routes: [
       GoRoute(
@@ -24,7 +29,7 @@ class MyRouterConfig {
       GoRoute(
         path: RoutesName.home,
         pageBuilder: (context, state) {
-          return const MaterialPage(child: HomePage());
+          return MaterialPage(child: HomePage());
         },
       ),
     ],
