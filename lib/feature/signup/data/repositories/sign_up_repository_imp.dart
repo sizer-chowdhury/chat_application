@@ -1,8 +1,8 @@
 import 'dart:async';
+import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/feature/signup/data/data_sources/remote_data_source.dart';
 import 'package:chat_app/feature/signup/data/models/sign_up_model.dart';
 import 'package:chat_app/feature/signup/domain/repositories/sign_up_repository.dart';
-import 'package:chat_app/feature/signup/presentation/widgets/user_data.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 
