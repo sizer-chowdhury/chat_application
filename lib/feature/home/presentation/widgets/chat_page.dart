@@ -1,5 +1,4 @@
 import 'dart:io';
-
 import 'package:chat_app/feature/home/presentation/widgets/chat_bubble.dart';
 import 'package:chat_app/feature/home/presentation/widgets/chat_service.dart';
 import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
