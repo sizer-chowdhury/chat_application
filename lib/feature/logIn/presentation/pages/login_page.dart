@@ -1,7 +1,7 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
+import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/feature/logIn/presentation/riverpod/login_controller.dart';
 import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
-import 'package:chat_app/feature/logIn/presentation/widgets/user_data.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -140,7 +140,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ref.read(loginControllerProvider.notifier).login(
                                   UserData(
                                     email: _emailController.text,
-                                    pass: _passwordController.text,
+                                    password: _passwordController.text,
                                   ),
                                 );
                           }
