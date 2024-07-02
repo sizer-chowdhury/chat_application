@@ -1,9 +1,10 @@
+import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/feature/home/presentation/widgets/drawer.dart';
-import 'package:chat_app/feature/home/presentation/widgets/user.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-
 import '../widgets/chat_page.dart';
+import '../widgets/chat_service.dart';
 
 class HomePage extends StatefulWidget {
   @override
@@ -11,11 +12,13 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomePage> {
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
         title: Text('Home'),
+        centerTitle: true,
         actions: [
           Row(
             children: [
@@ -32,6 +35,7 @@ class _HomeScreenState extends State<HomePage> {
       drawer: const MyDrawer(),
     );
   }
+
 }
 
 class UserSearchDelegate extends SearchDelegate<User> {
@@ -71,14 +75,14 @@ class UserSearchDelegate extends SearchDelegate<User> {
   }
 
   Widget _buildSearchResults() {
-    return StreamBuilder<List<User>>(
+    return StreamBuilder<List<UserData>>(
       stream: FirebaseFirestore.instance
           .collection('users')
           .where('name', isGreaterThanOrEqualTo: query)
           .where('name', isLessThanOrEqualTo: query + '\uf8ff')
           .snapshots()
           .map((querySnapshot) => querySnapshot.docs
-              .map((doc) => User.fromFirestore(doc))
+              .map((doc) => UserData.fromFirestore(doc))
               .toList()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
@@ -105,6 +109,7 @@ class UserSearchDelegate extends SearchDelegate<User> {
                       receiverID: user.id!,
                       receiverName: user.name!,
                       isActive: user.isActive!,
+                      photoUrl: user.photoUrl!,
                     ), // Pass user name to ChatPage
                   ),
                 );

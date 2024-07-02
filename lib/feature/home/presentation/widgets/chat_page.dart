@@ -13,13 +13,15 @@ class ChatPage extends StatefulWidget {
   final String receiverID;
   final String receiverName;
   final bool isActive;
+  final String photoUrl;
 
-  const ChatPage(
-      {Key? key,
-      required this.receiverID,
-      required this.receiverName,
-      required this.isActive})
-      : super(key: key);
+  const ChatPage({
+    Key? key,
+    required this.receiverID,
+    required this.receiverName,
+    required this.isActive,
+    required this.photoUrl,
+  }) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -37,14 +39,15 @@ class _ChatPageState extends State<ChatPage> {
   void initState() {
     super.initState();
 
-    myFocusNode.addListener(() {
-      if (myFocusNode.hasFocus) {
-        Future.delayed(
-          const Duration(microseconds: 500),
-          () => scrollDown(),
-        );
-      }
-    });
+    // myFocusNode.addListener(() {
+    //   if (myFocusNode.hasFocus) {
+    //     print("focus hocche??");
+    //     Future.delayed(
+    //       const Duration(microseconds: 500),
+    //       () => scrollDown(),
+    //     );
+    //   }
+    // });
 
     Future.delayed(
       const Duration(microseconds: 500),
@@ -63,7 +66,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void scrollDown() {
     _scrollController.animateTo(
-      _scrollController.position.maxScrollExtent,
+      _scrollController.position.minScrollExtent,
       duration: const Duration(seconds: 1),
       curve: Curves.fastOutSlowIn,
     );
@@ -71,7 +74,7 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(
+      await _chatService.sendMessage(widget.receiverName,
           widget.receiverID, _messageController.text);
       _messageController.clear();
     }
@@ -87,27 +90,58 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-            title: Center(
-          child: Column(
-            children: [
-              Text(widget.receiverName),
-              widget.isActive
-                  ? Text(
-                      'online',
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 15,
+            title: Row(
+          mainAxisAlignment: MainAxisAlignment.spaceBetween,
+          children: [
+            CircleAvatar(
+              backgroundImage: NetworkImage(widget.photoUrl),
+              radius: 25,
+            ),
+            Column(
+              children: [
+                Text(widget.receiverName),
+                widget.isActive
+                    ? Text(
+                        'online',
+                        style: TextStyle(
+                          color: Colors.green,
+                          fontSize: 15,
+                        ),
+                      )
+                    : Text(
+                        'offline',
+                        style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 15,
+                        ),
                       ),
-                    )
-                  : Text(
-                      'offline',
-                      style: TextStyle(
-                        color: Colors.red,
-                        fontSize: 15,
-                      ),
-                    ),
-            ],
-          ),
+              ],
+            ),
+            SizedBox(
+              height: 40,
+              width: 30,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.video_call),
+              ),
+            ),
+            SizedBox(
+              height: 40,
+              width: 30,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.call),
+              ),
+            ),
+            SizedBox(
+              height: 40,
+              width: 30,
+              child: IconButton(
+                onPressed: () {},
+                icon: Icon(Icons.more_vert),
+              ),
+            ),
+          ],
         )),
         body: Column(
           children: [
@@ -131,6 +165,7 @@ class _ChatPageState extends State<ChatPage> {
           return const Text("Loading..");
         }
         return ListView(
+          reverse: true,
           controller: _scrollController,
           children:
               snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
@@ -166,38 +201,39 @@ class _ChatPageState extends State<ChatPage> {
       padding: const EdgeInsets.only(bottom: 50, right: 10, left: 10),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
+          IconButton(
+            onPressed: () async {
+              ImagePicker imagePicker = ImagePicker();
+              XFile? file =
+                  await imagePicker.pickImage(source: ImageSource.gallery);
+              print('here: ${file?.path}');
+
+              if (file == null) return;
+
+              String fileName =
+                  DateTime.now().microsecondsSinceEpoch.toString();
+
+              Reference referenceRoot = FirebaseStorage.instance.ref();
+              Reference referenceDirImages = referenceRoot.child('images');
+              Reference referenceImageToUpload =
+                  referenceDirImages.child(fileName);
+
+              try {
+                await referenceImageToUpload.putFile(File(file.path));
+                imageUrl = await referenceImageToUpload.getDownloadURL();
+              } catch (error) {}
+              sendImage();
+            },
+            icon: Icon(
+              Icons.image,
               color: Colors.green,
-              shape: BoxShape.circle,
             ),
-            child: IconButton(
-              onPressed: () async {
-                ImagePicker imagePicker = ImagePicker();
-                XFile? file =
-                    await imagePicker.pickImage(source: ImageSource.gallery);
-                print('here: ${file?.path}');
-
-                if (file == null) return;
-
-                String fileName =
-                    DateTime.now().microsecondsSinceEpoch.toString();
-
-                Reference referenceRoot = FirebaseStorage.instance.ref();
-                Reference referenceDirImages = referenceRoot.child('images');
-                Reference referenceImageToUpload =
-                    referenceDirImages.child(fileName);
-
-                try {
-                  await referenceImageToUpload.putFile(File(file.path));
-                  imageUrl = await referenceImageToUpload.getDownloadURL();
-                } catch (error) {}
-                sendImage();
-              },
-              icon: Icon(
-                Icons.image,
-                color: Colors.white,
-              ),
+          ),
+          IconButton(
+            onPressed: (){},
+            icon: Icon(
+              Icons.keyboard_voice,
+              color: Colors.green,
             ),
           ),
           Expanded(
