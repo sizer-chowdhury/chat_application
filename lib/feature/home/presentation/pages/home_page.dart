@@ -11,7 +11,6 @@ class HomePage extends StatefulWidget {
 }
 
 class _HomeScreenState extends State<HomePage> {
-
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -32,7 +31,6 @@ class _HomeScreenState extends State<HomePage> {
       ),
       drawer: const MyDrawer(),
     );
-
   }
 }
 
@@ -80,8 +78,8 @@ class UserSearchDelegate extends SearchDelegate<User> {
           .where('name', isLessThanOrEqualTo: query + '\uf8ff')
           .snapshots()
           .map((querySnapshot) => querySnapshot.docs
-          .map((doc) => User.fromFirestore(doc))
-          .toList()),
+              .map((doc) => User.fromFirestore(doc))
+              .toList()),
       builder: (context, snapshot) {
         if (snapshot.connectionState == ConnectionState.waiting) {
           return Center(child: CircularProgressIndicator());
@@ -95,15 +93,19 @@ class UserSearchDelegate extends SearchDelegate<User> {
         return ListView.builder(
           itemCount: snapshot.data!.length,
           itemBuilder: (context, index) {
-            User user = snapshot.data![index];
+            final user = snapshot.data![index];
             return ListTile(
-              title: Text(user.name),
-              subtitle: Text(user.email),
+              title: Text(user.name!),
+              subtitle: Text(user.email!),
               onTap: () {
                 Navigator.push(
                   context,
                   MaterialPageRoute(
-                    builder: (context) => ChatPage(receiverID: user.id, receiverName: user.name), // Pass user name to ChatPage
+                    builder: (context) => ChatPage(
+                      receiverID: user.id!,
+                      receiverName: user.name!,
+                      isActive: user.isActive!,
+                    ), // Pass user name to ChatPage
                   ),
                 );
               },

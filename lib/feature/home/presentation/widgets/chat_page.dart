@@ -1,7 +1,7 @@
 import 'dart:io';
 import 'package:chat_app/feature/home/presentation/widgets/chat_bubble.dart';
 import 'package:chat_app/feature/home/presentation/widgets/chat_service.dart';
-import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
+import 'package:chat_app/feature/home/presentation/widgets/text_filed.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -12,9 +12,13 @@ import 'package:intl/intl.dart';
 class ChatPage extends StatefulWidget {
   final String receiverID;
   final String receiverName;
+  final bool isActive;
 
   const ChatPage(
-      {Key? key, required this.receiverID, required this.receiverName})
+      {Key? key,
+      required this.receiverID,
+      required this.receiverName,
+      required this.isActive})
       : super(key: key);
 
   @override
@@ -27,6 +31,43 @@ class _ChatPageState extends State<ChatPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
   String imageUrl = '';
+  FocusNode myFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    myFocusNode.addListener(() {
+      if (myFocusNode.hasFocus) {
+        Future.delayed(
+          const Duration(microseconds: 500),
+          () => scrollDown(),
+        );
+      }
+    });
+
+    Future.delayed(
+      const Duration(microseconds: 500),
+      () => scrollDown(),
+    );
+  }
+
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+  void scrollDown() {
+    _scrollController.animateTo(
+      _scrollController.position.maxScrollExtent,
+      duration: const Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
@@ -34,6 +75,7 @@ class _ChatPageState extends State<ChatPage> {
           widget.receiverID, _messageController.text);
       _messageController.clear();
     }
+    scrollDown();
   }
 
   void sendImage() async {
@@ -45,8 +87,28 @@ class _ChatPageState extends State<ChatPage> {
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.receiverName),
-        ),
+            title: Center(
+          child: Column(
+            children: [
+              Text(widget.receiverName),
+              widget.isActive
+                  ? Text(
+                      'online',
+                      style: TextStyle(
+                        color: Colors.green,
+                        fontSize: 15,
+                      ),
+                    )
+                  : Text(
+                      'offline',
+                      style: TextStyle(
+                        color: Colors.red,
+                        fontSize: 15,
+                      ),
+                    ),
+            ],
+          ),
+        )),
         body: Column(
           children: [
             Expanded(
@@ -69,8 +131,9 @@ class _ChatPageState extends State<ChatPage> {
           return const Text("Loading..");
         }
         return ListView(
+          controller: _scrollController,
           children:
-          snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
+              snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
         );
       },
     );
@@ -85,14 +148,14 @@ class _ChatPageState extends State<ChatPage> {
     String formattedTime = DateFormat.Hm().format(dateTime);
     return Column(
       crossAxisAlignment:
-      isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         ChatBubble(
           message:
-          data["imageUrl"] == null ? data["message"] : data["imageUrl"],
+              data["imageUrl"] == null ? data["message"] : data["imageUrl"],
           isCurrentUser: isCurrentUser,
           abc: formattedTime,
-          type: data["imageUrl"] == null ? "message":"image",
+          type: data["imageUrl"] == null ? "message" : "image",
         ),
       ],
     );
@@ -112,18 +175,18 @@ class _ChatPageState extends State<ChatPage> {
               onPressed: () async {
                 ImagePicker imagePicker = ImagePicker();
                 XFile? file =
-                await imagePicker.pickImage(source: ImageSource.gallery);
+                    await imagePicker.pickImage(source: ImageSource.gallery);
                 print('here: ${file?.path}');
 
                 if (file == null) return;
 
                 String fileName =
-                DateTime.now().microsecondsSinceEpoch.toString();
+                    DateTime.now().microsecondsSinceEpoch.toString();
 
                 Reference referenceRoot = FirebaseStorage.instance.ref();
                 Reference referenceDirImages = referenceRoot.child('images');
                 Reference referenceImageToUpload =
-                referenceDirImages.child(fileName);
+                    referenceDirImages.child(fileName);
 
                 try {
                   await referenceImageToUpload.putFile(File(file.path));
@@ -138,10 +201,11 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           Expanded(
-            child: MyTextfield(
+            child: CustomTextfield(
               controller: _messageController,
               hintText: 'Type a message',
               obscureText: false,
+              focusNode: myFocusNode,
             ),
           ),
           Container(
