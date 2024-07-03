@@ -3,14 +3,14 @@ import 'package:flutter/material.dart';
 class ChatBubble extends StatelessWidget {
   final String message;
   final bool isCurrentUser;
-  final String abc;
+  final String sendingTime;
   final String type;
 
   const ChatBubble({
     super.key,
     required this.message,
     required this.isCurrentUser,
-    required this.abc,
+    required this.sendingTime,
     required this.type
   });
 
@@ -28,7 +28,7 @@ class ChatBubble extends StatelessWidget {
         children: [
           type=="message"?Text(message):Image.network(message),
           SizedBox(height: 5),
-          Text(abc),
+          Text(sendingTime),
         ],
       ),
       padding: const EdgeInsets.all(16),

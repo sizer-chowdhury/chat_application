@@ -14,6 +14,7 @@ class ChatPage extends StatefulWidget {
   final String receiverName;
   final bool isActive;
   final String photoUrl;
+  final String senderName;
 
   const ChatPage({
     Key? key,
@@ -21,6 +22,7 @@ class ChatPage extends StatefulWidget {
     required this.receiverName,
     required this.isActive,
     required this.photoUrl,
+    required this.senderName,
   }) : super(key: key);
 
   @override
@@ -38,16 +40,6 @@ class _ChatPageState extends State<ChatPage> {
   @override
   void initState() {
     super.initState();
-
-    // myFocusNode.addListener(() {
-    //   if (myFocusNode.hasFocus) {
-    //     print("focus hocche??");
-    //     Future.delayed(
-    //       const Duration(microseconds: 500),
-    //       () => scrollDown(),
-    //     );
-    //   }
-    // });
 
     Future.delayed(
       const Duration(microseconds: 500),
@@ -74,8 +66,12 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
-      await _chatService.sendMessage(widget.receiverName,
-          widget.receiverID, _messageController.text);
+      await _chatService.sendMessage(
+        widget.senderName,
+        widget.receiverName,
+        widget.receiverID,
+        _messageController.text,
+      );
       _messageController.clear();
     }
     scrollDown();
@@ -83,7 +79,8 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendImage() async {
     print("send message");
-    await _chatService.sendImage(widget.receiverID, imageUrl);
+    await _chatService.sendImage(widget.senderName,
+        widget.receiverName,widget.receiverID, imageUrl);
   }
 
   @override
@@ -189,7 +186,7 @@ class _ChatPageState extends State<ChatPage> {
           message:
               data["imageUrl"] == null ? data["message"] : data["imageUrl"],
           isCurrentUser: isCurrentUser,
-          abc: formattedTime,
+          sendingTime: formattedTime,
           type: data["imageUrl"] == null ? "message" : "image",
         ),
       ],
@@ -230,7 +227,7 @@ class _ChatPageState extends State<ChatPage> {
             ),
           ),
           IconButton(
-            onPressed: (){},
+            onPressed: () {},
             icon: Icon(
               Icons.keyboard_voice,
               color: Colors.green,
