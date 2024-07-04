@@ -1,5 +1,6 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
 import 'package:chat_app/feature/home/presentation/pages/home_page.dart';
+import 'package:chat_app/feature/logIn/presentation/pages/forget_password_page.dart';
 import 'package:chat_app/feature/logIn/presentation/pages/login_page.dart';
 import 'package:chat_app/feature/signup/presentation/pages/signup_page.dart';
 import 'package:firebase_core/firebase_core.dart';
@@ -30,6 +31,12 @@ class MyRouterConfig {
         path: RoutesName.home,
         pageBuilder: (context, state) {
           return MaterialPage(child: HomePage());
+        },
+      ),
+      GoRoute(
+        path: RoutesName.forgetPassword,
+        pageBuilder: (context, state) {
+          return MaterialPage(child: ForgetPasswordPage());
         },
       ),
     ],
