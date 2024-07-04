@@ -47,7 +47,7 @@ class _MyTextfieldState extends State<CustomTextfield> {
           errorBorder: const OutlineInputBorder(
             borderSide: BorderSide(color: Colors.orange),
           ),
-          fillColor: Theme.of(context).colorScheme.secondary,
+          fillColor: Theme.of(context).colorScheme.surface,
           filled: true,
           hintText: widget.hintText,
           hintStyle: TextStyle(

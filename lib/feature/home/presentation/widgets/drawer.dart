@@ -36,7 +36,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
-    final state = ref.watch(myDrawerControllerProvider);
+    final state = ref.watch(updateImageControllerProvider);
     ref.listen(myDrawerControllerProvider, (_, next) {
       if (next.value?.$1 != null && next.value?.$2 == null) {
         setState(() {
@@ -69,6 +69,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
       }
     });
     return Drawer(
+      backgroundColor: Theme.of(context).colorScheme.surface,
       child: Padding(
         padding: const EdgeInsets.all(35),
         child: Column(
@@ -79,7 +80,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
                 Container(
                   height: 100,
                   width: 100,
-                  child: isProfileLoading
+                  child: state.isLoading
                       ? const CircularProgressIndicator()
                       : CircleAvatar(
                           backgroundImage: NetworkImage(photoLink!),
@@ -163,7 +164,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
             ElevatedButton(
               style: ButtonStyle(
                 backgroundColor: WidgetStatePropertyAll(
-                  Colors.greenAccent,
+                  Theme.of(context).colorScheme.primary,
                 ),
               ),
               onPressed: () async {
@@ -189,7 +190,9 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
                       });
                 }
               },
-              child: Text("Logout"),
+              child: Text("Logout",style: TextStyle(
+                color: Theme.of(context).colorScheme.surface,
+              ),),
             ),
           ],
         ),

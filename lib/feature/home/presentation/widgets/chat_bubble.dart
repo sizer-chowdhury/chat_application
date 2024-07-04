@@ -6,29 +6,42 @@ class ChatBubble extends StatelessWidget {
   final String sendingTime;
   final String type;
 
-  const ChatBubble({
-    super.key,
-    required this.message,
-    required this.isCurrentUser,
-    required this.sendingTime,
-    required this.type
-  });
+  const ChatBubble(
+      {super.key,
+      required this.message,
+      required this.isCurrentUser,
+      required this.sendingTime,
+      required this.type});
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: 250,
       decoration: BoxDecoration(
-        color: isCurrentUser ? Colors.green : Colors.grey.shade500,
+        color: isCurrentUser
+            ? Theme.of(context).colorScheme.primary
+            : Theme.of(context).colorScheme.secondary,
         borderRadius: BorderRadius.circular(10),
       ),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         mainAxisAlignment: MainAxisAlignment.spaceBetween,
         children: [
-          type=="message"?Text(message):Image.network(message),
+          type == "message"
+              ? Text(
+                  message,
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.inversePrimary,
+                  ),
+                )
+              : Image.network(message),
           SizedBox(height: 5),
-          Text(sendingTime),
+          Text(
+            sendingTime,
+            style: TextStyle(
+              color: Theme.of(context).colorScheme.inversePrimary,
+            ),
+          ),
         ],
       ),
       padding: const EdgeInsets.all(16),

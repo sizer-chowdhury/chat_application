@@ -79,67 +79,69 @@ class _ChatPageState extends State<ChatPage> {
 
   void sendImage() async {
     print("send message");
-    await _chatService.sendImage(widget.senderName,
-        widget.receiverName,widget.receiverID, imageUrl);
+    await _chatService.sendImage(
+        widget.senderName, widget.receiverName, widget.receiverID, imageUrl);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.surface,
             title: Row(
-          mainAxisAlignment: MainAxisAlignment.spaceBetween,
-          children: [
-            CircleAvatar(
-              backgroundImage: NetworkImage(widget.photoUrl),
-              radius: 25,
-            ),
-            Column(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
-                Text(widget.receiverName),
-                widget.isActive
-                    ? Text(
-                        'online',
-                        style: TextStyle(
-                          color: Colors.green,
-                          fontSize: 15,
-                        ),
-                      )
-                    : Text(
-                        'offline',
-                        style: TextStyle(
-                          color: Colors.red,
-                          fontSize: 15,
-                        ),
-                      ),
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.photoUrl),
+                  radius: 25,
+                ),
+                Column(
+                  children: [
+                    Text(widget.receiverName),
+                    widget.isActive
+                        ? Text(
+                            'online',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 15,
+                            ),
+                          )
+                        : Text(
+                            'offline',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
+                          ),
+                  ],
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 30,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.video_call),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 30,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.call),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 30,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.more_vert),
+                  ),
+                ),
               ],
-            ),
-            SizedBox(
-              height: 40,
-              width: 30,
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.video_call),
-              ),
-            ),
-            SizedBox(
-              height: 40,
-              width: 30,
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.call),
-              ),
-            ),
-            SizedBox(
-              height: 40,
-              width: 30,
-              child: IconButton(
-                onPressed: () {},
-                icon: Icon(Icons.more_vert),
-              ),
-            ),
-          ],
-        )),
+            )),
         body: Column(
           children: [
             Expanded(
@@ -195,7 +197,7 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 50, right: 10, left: 10),
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
       child: Row(
         children: [
           IconButton(
@@ -203,7 +205,6 @@ class _ChatPageState extends State<ChatPage> {
               ImagePicker imagePicker = ImagePicker();
               XFile? file =
                   await imagePicker.pickImage(source: ImageSource.gallery);
-              print('here: ${file?.path}');
 
               if (file == null) return;
 
@@ -223,14 +224,14 @@ class _ChatPageState extends State<ChatPage> {
             },
             icon: Icon(
               Icons.image,
-              color: Colors.green,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           IconButton(
             onPressed: () {},
             icon: Icon(
               Icons.keyboard_voice,
-              color: Colors.green,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           Expanded(
@@ -243,7 +244,7 @@ class _ChatPageState extends State<ChatPage> {
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
             child: IconButton(
