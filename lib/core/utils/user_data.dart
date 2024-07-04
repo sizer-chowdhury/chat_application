@@ -21,6 +21,8 @@ class UserData {
       id: doc.id,
       name: data['name'] ?? '',
       email: data['email'] ?? '',
+      photoUrl: data['photoUrl'] ?? '',
+      isActive: data['isActive'] ?? '',
     );
   }
 }

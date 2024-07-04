@@ -1,8 +1,7 @@
 import 'dart:io';
-
 import 'package:chat_app/feature/home/presentation/widgets/chat_bubble.dart';
 import 'package:chat_app/feature/home/presentation/widgets/chat_service.dart';
-import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
+import 'package:chat_app/feature/home/presentation/widgets/text_filed.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_storage/firebase_storage.dart';
@@ -13,10 +12,18 @@ import 'package:intl/intl.dart';
 class ChatPage extends StatefulWidget {
   final String receiverID;
   final String receiverName;
+  final bool isActive;
+  final String photoUrl;
+  final String senderName;
 
-  const ChatPage(
-      {Key? key, required this.receiverID, required this.receiverName})
-      : super(key: key);
+  const ChatPage({
+    Key? key,
+    required this.receiverID,
+    required this.receiverName,
+    required this.isActive,
+    required this.photoUrl,
+    required this.senderName,
+  }) : super(key: key);
 
   @override
   _ChatPageState createState() => _ChatPageState();
@@ -28,26 +35,113 @@ class _ChatPageState extends State<ChatPage> {
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
   String imageUrl = '';
+  FocusNode myFocusNode = FocusNode();
+
+  @override
+  void initState() {
+    super.initState();
+
+    Future.delayed(
+      const Duration(microseconds: 500),
+      () => scrollDown(),
+    );
+  }
+
+  @override
+  void dispose() {
+    myFocusNode.dispose();
+    _messageController.dispose();
+    super.dispose();
+  }
+
+  final ScrollController _scrollController = ScrollController();
+
+  void scrollDown() {
+    _scrollController.animateTo(
+      _scrollController.position.minScrollExtent,
+      duration: const Duration(seconds: 1),
+      curve: Curves.fastOutSlowIn,
+    );
+  }
 
   void sendMessage() async {
     if (_messageController.text.isNotEmpty) {
       await _chatService.sendMessage(
-          widget.receiverID, _messageController.text);
+        widget.senderName,
+        widget.receiverName,
+        widget.receiverID,
+        _messageController.text,
+      );
       _messageController.clear();
     }
+    scrollDown();
   }
 
   void sendImage() async {
     print("send message");
-    await _chatService.sendImage(widget.receiverID, imageUrl);
+    await _chatService.sendImage(
+        widget.senderName, widget.receiverName, widget.receiverID, imageUrl);
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
         appBar: AppBar(
-          title: Text(widget.receiverName),
-        ),
+            backgroundColor: Theme.of(context).colorScheme.primary,
+            foregroundColor: Theme.of(context).colorScheme.surface,
+            title: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                CircleAvatar(
+                  backgroundImage: NetworkImage(widget.photoUrl),
+                  radius: 25,
+                ),
+                Column(
+                  children: [
+                    Text(widget.receiverName),
+                    widget.isActive
+                        ? Text(
+                            'online',
+                            style: TextStyle(
+                              color: Colors.green,
+                              fontSize: 15,
+                            ),
+                          )
+                        : Text(
+                            'offline',
+                            style: TextStyle(
+                              color: Colors.red,
+                              fontSize: 15,
+                            ),
+                          ),
+                  ],
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 30,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.video_call),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 30,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.call),
+                  ),
+                ),
+                SizedBox(
+                  height: 40,
+                  width: 30,
+                  child: IconButton(
+                    onPressed: () {},
+                    icon: Icon(Icons.more_vert),
+                  ),
+                ),
+              ],
+            )),
         body: Column(
           children: [
             Expanded(
@@ -70,8 +164,10 @@ class _ChatPageState extends State<ChatPage> {
           return const Text("Loading..");
         }
         return ListView(
+          reverse: true,
+          controller: _scrollController,
           children:
-          snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
+              snapshot.data!.docs.map((doc) => _buildMessageItem(doc)).toList(),
         );
       },
     );
@@ -86,14 +182,14 @@ class _ChatPageState extends State<ChatPage> {
     String formattedTime = DateFormat.Hm().format(dateTime);
     return Column(
       crossAxisAlignment:
-      isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
+          isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
         ChatBubble(
           message:
-          data["imageUrl"] == null ? data["message"] : data["imageUrl"],
+              data["imageUrl"] == null ? data["message"] : data["imageUrl"],
           isCurrentUser: isCurrentUser,
-          abc: formattedTime,
-          type: data["imageUrl"] == null ? "message":"image",
+          sendingTime: formattedTime,
+          type: data["imageUrl"] == null ? "message" : "image",
         ),
       ],
     );
@@ -101,53 +197,54 @@ class _ChatPageState extends State<ChatPage> {
 
   Widget _buildUserInput() {
     return Padding(
-      padding: const EdgeInsets.only(bottom: 50, right: 10, left: 10),
+      padding: const EdgeInsets.only(left: 15, right: 15, bottom: 25),
       child: Row(
         children: [
-          Container(
-            decoration: BoxDecoration(
-              color: Colors.green,
-              shape: BoxShape.circle,
+          IconButton(
+            onPressed: () async {
+              ImagePicker imagePicker = ImagePicker();
+              XFile? file =
+                  await imagePicker.pickImage(source: ImageSource.gallery);
+
+              if (file == null) return;
+
+              String fileName =
+                  DateTime.now().microsecondsSinceEpoch.toString();
+
+              Reference referenceRoot = FirebaseStorage.instance.ref();
+              Reference referenceDirImages = referenceRoot.child('images');
+              Reference referenceImageToUpload =
+                  referenceDirImages.child(fileName);
+
+              try {
+                await referenceImageToUpload.putFile(File(file.path));
+                imageUrl = await referenceImageToUpload.getDownloadURL();
+              } catch (error) {}
+              sendImage();
+            },
+            icon: Icon(
+              Icons.image,
+              color: Theme.of(context).colorScheme.primary,
             ),
-            child: IconButton(
-              onPressed: () async {
-                ImagePicker imagePicker = ImagePicker();
-                XFile? file =
-                await imagePicker.pickImage(source: ImageSource.gallery);
-                print('here: ${file?.path}');
-
-                if (file == null) return;
-
-                String fileName =
-                DateTime.now().microsecondsSinceEpoch.toString();
-
-                Reference referenceRoot = FirebaseStorage.instance.ref();
-                Reference referenceDirImages = referenceRoot.child('images');
-                Reference referenceImageToUpload =
-                referenceDirImages.child(fileName);
-
-                try {
-                  await referenceImageToUpload.putFile(File(file.path));
-                  imageUrl = await referenceImageToUpload.getDownloadURL();
-                } catch (error) {}
-                sendImage();
-              },
-              icon: Icon(
-                Icons.image,
-                color: Colors.white,
-              ),
+          ),
+          IconButton(
+            onPressed: () {},
+            icon: Icon(
+              Icons.keyboard_voice,
+              color: Theme.of(context).colorScheme.primary,
             ),
           ),
           Expanded(
-            child: MyTextfield(
+            child: CustomTextfield(
               controller: _messageController,
               hintText: 'Type a message',
               obscureText: false,
+              focusNode: myFocusNode,
             ),
           ),
           Container(
             decoration: BoxDecoration(
-              color: Colors.green,
+              color: Theme.of(context).colorScheme.primary,
               shape: BoxShape.circle,
             ),
             child: IconButton(

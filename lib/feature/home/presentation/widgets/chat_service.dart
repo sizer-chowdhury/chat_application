@@ -8,13 +8,11 @@ class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
 
-  Future<void> sendMessage(String receiverID, message) async {
+  Future<void> sendMessage(String senderName, String receiverName,
+      String receiverID, message) async {
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
-    DateTime dateTime = timestamp.toDate();
-    String formattedTime = DateFormat.Hm().format(dateTime);
-    // print("here: ${formattedTime}");
 
     Message newMessage = Message(
       senderID: currentUserID,
@@ -22,6 +20,9 @@ class ChatService {
       receiverID: receiverID,
       message: message,
       timestamp: timestamp,
+      receiverName: receiverName,
+      senderName: senderName,
+      type: "text",
     );
 
     List<String> ids = [currentUserID, receiverID];
@@ -33,6 +34,10 @@ class ChatService {
         .doc(chatRoomID)
         .collection("message")
         .add(newMessage.toMap());
+    await _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomID)
+        .set(newMessage.toMap());
   }
 
   Stream<QuerySnapshot> getMessage(String userID, otherUserID) {
@@ -44,18 +49,16 @@ class ChatService {
         .collection("chat_rooms")
         .doc(chatRoomID)
         .collection("message")
-        .orderBy("timestamp", descending: false)
+        .orderBy("timestamp", descending: true)
         .snapshots();
   }
 
-  Future<void> sendImage(String receiverID, imageUrl) async {
+  Future<void> sendImage(String senderName, String receiverName,
+      String receiverID, imageUrl) async {
     print("coming here baby:");
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
-    DateTime dateTime = timestamp.toDate();
-    String formattedTime = DateFormat.Hm().format(dateTime);
-    // print("here: ${formattedTime}");
 
     Image newImage = Image(
       senderID: currentUserID,
@@ -63,6 +66,9 @@ class ChatService {
       receiverID: receiverID,
       imageUrl: imageUrl,
       timestamp: timestamp,
+      receiverName: receiverName,
+      senderName: senderName,
+      type: "img",
     );
 
     List<String> ids = [currentUserID, receiverID];
@@ -74,5 +80,11 @@ class ChatService {
         .doc(chatRoomID)
         .collection("message")
         .add(newImage.toMap());
+    await _firestore
+        .collection('chat_rooms')
+        .doc(chatRoomID)
+        .set(newImage.toMap());
   }
+
+  //today
 }
