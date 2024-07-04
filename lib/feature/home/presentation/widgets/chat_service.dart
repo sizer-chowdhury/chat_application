@@ -7,7 +7,7 @@ import 'package:intl/intl.dart';
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
-  String chatRoomID ='';
+  String chatRoomID = '';
 
   Future<void> sendMessage(String senderName, String receiverName,
       String receiverID, message) async {
@@ -93,7 +93,8 @@ class ChatService {
   }
 
   //today
-  Future<void> updateMessage(String chatRoomID, String messageId, String newMessage) async {
+  Future<void> updateMessage(
+      String chatRoomID, String messageId, String newMessage) async {
     try {
       await _firestore
           .collection('chat_rooms')
@@ -101,6 +102,17 @@ class ChatService {
           .collection('message')
           .doc(messageId)
           .update({'message': newMessage});
+
+      Map<String, dynamic>? lastMessage = await getLatestMessage(chatRoomID);
+
+      if (lastMessage != null) {
+        await _firestore
+            .collection('chat_rooms')
+            .doc(chatRoomID)
+            .set(lastMessage);
+      } else {
+        print("No messages found in chat room");
+      }
     } catch (e) {
       print('Error updating message: $e');
     }
@@ -114,11 +126,41 @@ class ChatService {
           .collection('message')
           .doc(messageId)
           .delete();
-      print('Message deleted successfully');
+      Map<String, dynamic>? lastMessage = await getLatestMessage(chatRoomID);
+
+      if (lastMessage != null) {
+        await _firestore
+            .collection('chat_rooms')
+            .doc(chatRoomID)
+            .set(lastMessage);
+      } else {
+        print("No messages found in chat room");
+      }
     } catch (e) {
       print('Error deleting message: $e');
     }
   }
 
+  Future<Map<String, dynamic>?> getLatestMessage(String chatRoomID) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection("chat_rooms")
+              .doc(chatRoomID)
+              .collection("message")
+              .orderBy("timestamp", descending: true)
+              .limit(1)
+              .get();
 
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.data();
+      } else {
+        await _firestore.collection('chat_rooms').doc(chatRoomID).delete();
+        throw StateError("No messages found in chat room");
+      }
+    } catch (e) {
+      print("Error retrieving latest message: $e");
+      throw e;
+    }
+  }
 }

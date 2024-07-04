@@ -191,8 +191,8 @@ class _ChatPageState extends State<ChatPage> {
                 builder: (context) => AlertDialog(
                   title: Text("Manage Message"),
                   content: Column(
-                    mainAxisSize: MainAxisSize.min,
-                    crossAxisAlignment: CrossAxisAlignment.start,
+                    //mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.center,
                     children: [
                       TextButton(
                         onPressed: () async {
@@ -222,7 +222,6 @@ class _ChatPageState extends State<ChatPage> {
                                       doc.id,
                                       data['message'],
                                     );
-                                    Navigator.of(context).pop();
                                     Navigator.of(context).pop();
                                   },
                                   child: Text("Update"),
