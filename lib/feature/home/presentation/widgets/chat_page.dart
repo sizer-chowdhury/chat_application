@@ -31,7 +31,6 @@ class ChatPage extends StatefulWidget {
 
 class _ChatPageState extends State<ChatPage> {
   final TextEditingController _messageController = TextEditingController();
-
   final FirebaseAuth _auth = FirebaseAuth.instance;
   final ChatService _chatService = ChatService();
   String imageUrl = '';
@@ -184,12 +183,90 @@ class _ChatPageState extends State<ChatPage> {
       crossAxisAlignment:
           isCurrentUser ? CrossAxisAlignment.end : CrossAxisAlignment.start,
       children: [
-        ChatBubble(
-          message:
-              data["imageUrl"] == null ? data["message"] : data["imageUrl"],
-          isCurrentUser: isCurrentUser,
-          sendingTime: formattedTime,
-          type: data["imageUrl"] == null ? "message" : "image",
+        GestureDetector(
+          onLongPress: () {
+            if (isCurrentUser) {
+              showDialog(
+                context: context,
+                builder: (context) => AlertDialog(
+                  title: Text("Manage Message"),
+                  content: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      TextButton(
+                        onPressed: () async {
+                          Navigator.pop(context);
+                          showDialog(
+                            context: context,
+                            builder: (context) => AlertDialog(
+                              title: Text("Edit Message"),
+                              content: TextField(
+                                controller: TextEditingController(
+                                    text: data['message']),
+                                onChanged: (value) {
+                                  data['message'] = value;
+                                },
+                              ),
+                              actions: [
+                                TextButton(
+                                  onPressed: () async {
+                                    List<String> ids = [
+                                      _auth.currentUser!.uid,
+                                      widget.receiverID
+                                    ];
+                                    ids.sort();
+                                    String chatRoomID = ids.join('_');
+                                    await _chatService.updateMessage(
+                                      chatRoomID,
+                                      doc.id,
+                                      data['message'],
+                                    );
+                                    Navigator.of(context).pop();
+                                    Navigator.of(context).pop();
+                                  },
+                                  child: Text("Update"),
+                                ),
+                              ],
+                            ),
+                          );
+                        },
+                        child: Text("Edit"),
+                      ),
+                      TextButton(
+                        onPressed: () async {
+                          List<String> ids = [
+                            _auth.currentUser!.uid,
+                            widget.receiverID
+                          ];
+                          ids.sort();
+                          String chatRoomID = ids.join('_');
+                          await _chatService.deleteMessage(chatRoomID, doc.id);
+                          Navigator.of(context).pop();
+                        },
+                        child: Text("Delete"),
+                      ),
+                    ],
+                  ),
+                  actions: [
+                    TextButton(
+                      onPressed: () {
+                        Navigator.of(context).pop();
+                      },
+                      child: Text("Cancel"),
+                    ),
+                  ],
+                ),
+              );
+            }
+          },
+          child: ChatBubble(
+            message:
+                data["imageUrl"] == null ? data["message"] : data["imageUrl"],
+            isCurrentUser: isCurrentUser,
+            sendingTime: formattedTime,
+            type: data["imageUrl"] == null ? "message" : "image",
+          ),
         ),
       ],
     );

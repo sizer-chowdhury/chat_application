@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String chatRoomID ='';
 
   Future<void> sendMessage(String senderName, String receiverName,
       String receiverID, message) async {
@@ -23,21 +24,27 @@ class ChatService {
       receiverName: receiverName,
       senderName: senderName,
       type: "text",
+      docId: '',
     );
 
     List<String> ids = [currentUserID, receiverID];
     ids.sort();
     String chatRoomID = ids.join('_');
 
-    await _firestore
+    DocumentReference messageRef = await _firestore
         .collection("chat_rooms")
         .doc(chatRoomID)
         .collection("message")
         .add(newMessage.toMap());
+
+    newMessage.docId = messageRef.id;
+
     await _firestore
         .collection('chat_rooms')
         .doc(chatRoomID)
         .set(newMessage.toMap());
+
+    await messageRef.update({'docId': messageRef.id});
   }
 
   Stream<QuerySnapshot> getMessage(String userID, otherUserID) {
@@ -55,7 +62,6 @@ class ChatService {
 
   Future<void> sendImage(String senderName, String receiverName,
       String receiverID, imageUrl) async {
-    print("coming here baby:");
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
@@ -87,4 +93,32 @@ class ChatService {
   }
 
   //today
+  Future<void> updateMessage(String chatRoomID, String messageId, String newMessage) async {
+    try {
+      await _firestore
+          .collection('chat_rooms')
+          .doc(chatRoomID)
+          .collection('message')
+          .doc(messageId)
+          .update({'message': newMessage});
+    } catch (e) {
+      print('Error updating message: $e');
+    }
+  }
+
+  Future<void> deleteMessage(String chatRoomID, String messageId) async {
+    try {
+      await _firestore
+          .collection('chat_rooms')
+          .doc(chatRoomID)
+          .collection('message')
+          .doc(messageId)
+          .delete();
+      print('Message deleted successfully');
+    } catch (e) {
+      print('Error deleting message: $e');
+    }
+  }
+
+
 }

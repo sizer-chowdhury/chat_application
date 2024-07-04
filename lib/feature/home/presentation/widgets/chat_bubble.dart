@@ -31,7 +31,8 @@ class ChatBubble extends StatelessWidget {
               ? Text(
                   message,
                   style: TextStyle(
-                    color: Theme.of(context).colorScheme.inversePrimary,
+                    color: Colors.white,
+                    fontSize: 18,
                   ),
                 )
               : Image.network(message),
@@ -39,7 +40,7 @@ class ChatBubble extends StatelessWidget {
           Text(
             sendingTime,
             style: TextStyle(
-              color: Theme.of(context).colorScheme.inversePrimary,
+              color: Colors.white,
             ),
           ),
         ],
