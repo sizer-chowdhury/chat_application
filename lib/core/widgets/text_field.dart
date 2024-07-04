@@ -41,10 +41,11 @@ class _MyTextfieldState extends State<MyTextfield> {
             borderSide:
             BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
-          errorBorder: const OutlineInputBorder(
-            borderSide: BorderSide(color: Colors.orange),
+          errorBorder:  OutlineInputBorder(
+            borderSide:
+            BorderSide(color: Theme.of(context).colorScheme.inversePrimary),
           ),
-          fillColor: Theme.of(context).colorScheme.secondary,
+          fillColor: Theme.of(context).colorScheme.surface,
           filled: true,
           hintText: widget.hintText,
           hintStyle: TextStyle(
@@ -63,8 +64,8 @@ class _MyTextfieldState extends State<MyTextfield> {
             },
           )
               : null,
-          errorStyle: const TextStyle(
-            color: Colors.red,
+          errorStyle: TextStyle(
+            color: Theme.of(context).colorScheme.tertiary,
             fontSize: 14.0,
             fontStyle: FontStyle.italic,
           ),

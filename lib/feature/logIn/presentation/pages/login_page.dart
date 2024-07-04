@@ -1,7 +1,7 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
 import 'package:chat_app/core/utils/user_data.dart';
+import 'package:chat_app/core/widgets/text_field.dart';
 import 'package:chat_app/feature/logIn/presentation/riverpod/login_controller.dart';
-import 'package:chat_app/feature/logIn/presentation/widgets/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
@@ -18,6 +18,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final TextEditingController _passwordController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
   bool isButtonEnable = false;
+  bool? enableCheckbox = false;
 
   ({
     bool email,
@@ -109,6 +110,10 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                   if (value!.isEmpty) {
                     return 'Email is required';
                   }
+                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                      .hasMatch(value)) {
+                    return 'Email must be an email';
+                  }
                   return null;
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -129,6 +134,67 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
+              Padding(
+                padding: const EdgeInsets.only(left: 30, right: 24),
+                child: Row(
+                  children: [
+                    Row(
+                      children: [
+                        SizedBox(
+                          height: 10,
+                          width: 10,
+                          child: Checkbox(
+                            value: enableCheckbox,
+                            onChanged: (newValue) {
+                              setState(() {
+                                enableCheckbox = newValue;
+                              });
+                            },
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(6),
+                            ),
+                            fillColor: (enableCheckbox!)
+                                ? WidgetStatePropertyAll(
+                              Theme.of(context).colorScheme.primary,
+                            )
+                                : WidgetStatePropertyAll(
+                              Theme.of(context)
+                                  .colorScheme
+                                  .secondary
+                                  .withOpacity(0.5),
+                            ),
+                            side: (enableCheckbox!)
+                                ? BorderSide(
+                              color: Theme.of(context)
+                                  .colorScheme
+                                  .primary
+                                  .withOpacity(0.1),
+                              width: 2,
+                            )
+                                : BorderSide(
+                              color: Theme.of(context).colorScheme.primary,
+                              width: 2,
+                            ),
+                          ),
+                        ),
+                        const SizedBox(width: 7),
+                        Text(
+                          'Remember Me',
+                        ),
+                      ],
+                    ),
+                    const Spacer(),
+                    TextButton(
+                      onPressed: () {
+                        context.push(RoutesName.forgetPassword);
+                      },
+                      child: Text(
+                        'Forget Password?',
+                      ),
+                    ),
+                  ],
+                ),
+              ),
               const SizedBox(height: 25),
               Container(
                 width: double.infinity,
@@ -147,14 +213,21 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
+                    backgroundColor: isButtonEnable
+                        ? Theme.of(context).colorScheme.primary
+                        : Colors.red,
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: state.isLoading
                       ? const CircularProgressIndicator(
                           backgroundColor: Colors.white10,
                         )
-                      : Text('LogIn'),
+                      : Text(
+                          'LogIn',
+                          style: TextStyle(
+                            color: isButtonEnable ? Colors.white : Colors.black,
+                          ),
+                        ),
                 ),
               ),
               const SizedBox(height: 25),
