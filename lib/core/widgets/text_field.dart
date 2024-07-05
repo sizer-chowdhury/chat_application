@@ -9,11 +9,11 @@ class MyTextfield extends StatefulWidget {
 
   const MyTextfield(
       {super.key,
-        required this.hintText,
-        required this.obscureText,
-        required this.controller,
-        this.validator,
-        this.autovalidateMode // Optional validator function
+      required this.hintText,
+      required this.obscureText,
+      required this.controller,
+      this.validator,
+      this.autovalidateMode // Optional validator function
       });
 
   @override
@@ -32,18 +32,19 @@ class _MyTextfieldState extends State<MyTextfield> {
         obscureText: widget.obscureText ? _obscureText : false,
         controller: widget.controller,
         validator: widget.validator,
+        style: Theme.of(context).textTheme.titleMedium,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: Theme.of(context).colorScheme.tertiary),
+                BorderSide(color: Theme.of(context).colorScheme.tertiary),
           ),
           focusedBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: Theme.of(context).colorScheme.primary),
+                BorderSide(color: Theme.of(context).colorScheme.primary),
           ),
-          errorBorder:  OutlineInputBorder(
+          errorBorder: OutlineInputBorder(
             borderSide:
-            BorderSide(color: Theme.of(context).colorScheme.inversePrimary),
+                BorderSide(color: Theme.of(context).colorScheme.inversePrimary),
           ),
           fillColor: Theme.of(context).colorScheme.surface,
           filled: true,
@@ -53,16 +54,16 @@ class _MyTextfieldState extends State<MyTextfield> {
           ),
           suffixIcon: widget.obscureText
               ? IconButton(
-            icon: Icon(
-              _obscureText ? Icons.visibility_off : Icons.visibility,
-              color: Theme.of(context).colorScheme.primary,
-            ),
-            onPressed: () {
-              setState(() {
-                _obscureText = !_obscureText;
-              });
-            },
-          )
+                  icon: Icon(
+                    _obscureText ? Icons.visibility_off : Icons.visibility,
+                    color: Theme.of(context).colorScheme.primary,
+                  ),
+                  onPressed: () {
+                    setState(() {
+                      _obscureText = !_obscureText;
+                    });
+                  },
+                )
               : null,
           errorStyle: TextStyle(
             color: Theme.of(context).colorScheme.tertiary,

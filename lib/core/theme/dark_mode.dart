@@ -15,6 +15,7 @@ ThemeData darkMode = ThemeData(
       fontWeight: FontWeight.w500,
     ),
     titleMedium: TextStyle(
+      fontSize: 14,
       color: Colors.white,
       fontWeight: FontWeight.w300,
     ),

@@ -155,31 +155,33 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                             ),
                             fillColor: (enableCheckbox!)
                                 ? WidgetStatePropertyAll(
-                              Theme.of(context).colorScheme.primary,
-                            )
+                                    Theme.of(context).colorScheme.primary,
+                                  )
                                 : WidgetStatePropertyAll(
-                              Theme.of(context)
-                                  .colorScheme
-                                  .secondary
-                                  .withOpacity(0.5),
-                            ),
+                                    Theme.of(context)
+                                        .colorScheme
+                                        .secondary
+                                        .withOpacity(0.5),
+                                  ),
                             side: (enableCheckbox!)
                                 ? BorderSide(
-                              color: Theme.of(context)
-                                  .colorScheme
-                                  .primary
-                                  .withOpacity(0.1),
-                              width: 2,
-                            )
+                                    color: Theme.of(context)
+                                        .colorScheme
+                                        .primary
+                                        .withOpacity(0.1),
+                                    width: 2,
+                                  )
                                 : BorderSide(
-                              color: Theme.of(context).colorScheme.primary,
-                              width: 2,
-                            ),
+                                    color:
+                                        Theme.of(context).colorScheme.primary,
+                                    width: 2,
+                                  ),
                           ),
                         ),
                         const SizedBox(width: 7),
                         Text(
                           'Remember Me',
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                       ],
                     ),
@@ -224,9 +226,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         )
                       : Text(
                           'LogIn',
-                          style: TextStyle(
-                            color: isButtonEnable ? Colors.white : Colors.black,
-                          ),
+                          style: Theme.of(context).textTheme.titleMedium,
                         ),
                 ),
               ),
