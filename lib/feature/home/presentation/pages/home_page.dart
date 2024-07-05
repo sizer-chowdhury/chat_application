@@ -29,8 +29,7 @@ class _HomeScreenState extends State<HomePage> {
               IconButton(
                 icon: Icon(Icons.search),
                 onPressed: () {
-                  showSearch(
-                      context: context, delegate: UserSearchDelegate());
+                  showSearch(context: context, delegate: UserSearchDelegate());
                 },
               ),
             ],
@@ -130,7 +129,7 @@ class _HomeScreenState extends State<HomePage> {
                       snapshot.data!.data() as Map<String, dynamic>;
 
                   return Container(
-                    margin: EdgeInsets.only(top:1, left: 2, right: 2),
+                    margin: EdgeInsets.only(top: 1, left: 2, right: 2),
                     decoration: BoxDecoration(
                       color: Theme.of(context).colorScheme.surface,
                       borderRadius: BorderRadius.circular(5),
@@ -145,10 +144,7 @@ class _HomeScreenState extends State<HomePage> {
                         children: [
                           Text(
                             '${chatRoomsData[index]['receiverName']}',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SizedBox(width: 5),
                           Container(
@@ -156,22 +152,22 @@ class _HomeScreenState extends State<HomePage> {
                             width: 10,
                             decoration: BoxDecoration(
                               borderRadius: BorderRadius.circular(50),
-                              color: (userData['isActive'])
-                                  ? Colors.green
-                                  : null,
+                              color:
+                                  (userData['isActive']) ? Colors.green : null,
                             ),
                           ),
                         ],
                       ),
                       subtitle: chatRoomsData[index]['type'] == 'text'
                           ? Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Expanded(
                                   child: Text(
                                     chatRoomsData[index]['message'],
                                     maxLines: 1,
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
                                 const Spacer(),
@@ -184,8 +180,7 @@ class _HomeScreenState extends State<HomePage> {
                               ],
                             )
                           : Row(
-                              mainAxisAlignment:
-                                  MainAxisAlignment.spaceBetween,
+                              mainAxisAlignment: MainAxisAlignment.spaceBetween,
                               children: [
                                 Text(
                                   "image",

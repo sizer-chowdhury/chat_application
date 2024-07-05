@@ -9,6 +9,7 @@ class Message {
   final String receiverName;
   final String senderName;
   final String type;
+  String docId;
 
   Message({
     required this.senderID,
@@ -19,6 +20,7 @@ class Message {
     required this.receiverName,
     required this.senderName,
     required this.type,
+    required this.docId,
   });
 
   Map<String, dynamic> toMap() {

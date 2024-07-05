@@ -7,6 +7,7 @@ import 'package:intl/intl.dart';
 class ChatService {
   final FirebaseFirestore _firestore = FirebaseFirestore.instance;
   final FirebaseAuth _auth = FirebaseAuth.instance;
+  String chatRoomID = '';
 
   Future<void> sendMessage(String senderName, String receiverName,
       String receiverID, message) async {
@@ -23,21 +24,27 @@ class ChatService {
       receiverName: receiverName,
       senderName: senderName,
       type: "text",
+      docId: '',
     );
 
     List<String> ids = [currentUserID, receiverID];
     ids.sort();
     String chatRoomID = ids.join('_');
 
-    await _firestore
+    DocumentReference messageRef = await _firestore
         .collection("chat_rooms")
         .doc(chatRoomID)
         .collection("message")
         .add(newMessage.toMap());
+
+    newMessage.docId = messageRef.id;
+
     await _firestore
         .collection('chat_rooms')
         .doc(chatRoomID)
         .set(newMessage.toMap());
+
+    await messageRef.update({'docId': messageRef.id});
   }
 
   Stream<QuerySnapshot> getMessage(String userID, otherUserID) {
@@ -55,7 +62,6 @@ class ChatService {
 
   Future<void> sendImage(String senderName, String receiverName,
       String receiverID, imageUrl) async {
-    print("coming here baby:");
     final String currentUserID = _auth.currentUser!.uid;
     final String currentUserEmail = _auth.currentUser!.email!;
     final Timestamp timestamp = Timestamp.now();
@@ -87,4 +93,74 @@ class ChatService {
   }
 
   //today
+  Future<void> updateMessage(
+      String chatRoomID, String messageId, String newMessage) async {
+    try {
+      await _firestore
+          .collection('chat_rooms')
+          .doc(chatRoomID)
+          .collection('message')
+          .doc(messageId)
+          .update({'message': newMessage});
+
+      Map<String, dynamic>? lastMessage = await getLatestMessage(chatRoomID);
+
+      if (lastMessage != null) {
+        await _firestore
+            .collection('chat_rooms')
+            .doc(chatRoomID)
+            .set(lastMessage);
+      } else {
+        print("No messages found in chat room");
+      }
+    } catch (e) {
+      print('Error updating message: $e');
+    }
+  }
+
+  Future<void> deleteMessage(String chatRoomID, String messageId) async {
+    try {
+      await _firestore
+          .collection('chat_rooms')
+          .doc(chatRoomID)
+          .collection('message')
+          .doc(messageId)
+          .delete();
+      Map<String, dynamic>? lastMessage = await getLatestMessage(chatRoomID);
+
+      if (lastMessage != null) {
+        await _firestore
+            .collection('chat_rooms')
+            .doc(chatRoomID)
+            .set(lastMessage);
+      } else {
+        print("No messages found in chat room");
+      }
+    } catch (e) {
+      print('Error deleting message: $e');
+    }
+  }
+
+  Future<Map<String, dynamic>?> getLatestMessage(String chatRoomID) async {
+    try {
+      QuerySnapshot<Map<String, dynamic>> querySnapshot =
+          await FirebaseFirestore.instance
+              .collection("chat_rooms")
+              .doc(chatRoomID)
+              .collection("message")
+              .orderBy("timestamp", descending: true)
+              .limit(1)
+              .get();
+
+      if (querySnapshot.docs.isNotEmpty) {
+        return querySnapshot.docs.first.data();
+      } else {
+        await _firestore.collection('chat_rooms').doc(chatRoomID).delete();
+        throw StateError("No messages found in chat room");
+      }
+    } catch (e) {
+      print("Error retrieving latest message: $e");
+      throw e;
+    }
+  }
 }

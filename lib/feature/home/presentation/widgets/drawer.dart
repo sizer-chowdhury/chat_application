@@ -1,4 +1,5 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
+import 'package:chat_app/core/theme/theme_provider.dart';
 import 'package:chat_app/feature/home/presentation/riverpod/update_status_controller.dart';
 import 'package:chat_app/feature/home/presentation/riverpod/upload_image_controller.dart';
 import 'package:firebase_auth/firebase_auth.dart';
@@ -21,6 +22,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
   User? user;
   String? imageUrl;
   bool isActive = true;
+  bool darkMode = false;
   bool isProfileLoading = true;
   FirebaseAuth auth = FirebaseAuth.instance;
   String? photoLink =
@@ -36,6 +38,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeModeProvider);
     final state = ref.watch(updateImageControllerProvider);
     ref.listen(myDrawerControllerProvider, (_, next) {
       if (next.value?.$1 != null && next.value?.$2 == null) {
@@ -125,8 +128,18 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
               ],
             ),
             const SizedBox(height: 15),
-            Text('${auth.currentUser?.displayName}'),
-            Text('${auth.currentUser?.email}'),
+            Text(
+              '${auth.currentUser?.displayName}',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+            ),
+            Text(
+              '${auth.currentUser?.email}',
+              style: TextStyle(
+                color: Theme.of(context).colorScheme.tertiary,
+              ),
+            ),
             const SizedBox(height: 30),
             Row(
               mainAxisAlignment: MainAxisAlignment.end,
@@ -137,7 +150,7 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
                       TextSpan(
                         text: 'Active status ',
                         style: TextStyle(
-                          color: Colors.black,
+                          color: Theme.of(context).colorScheme.tertiary,
                           fontWeight: FontWeight.w400,
                         ),
                       ),
@@ -155,6 +168,37 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
                       ref
                           .read(updateStatusControllerProvider.notifier)
                           .updateStatus(status: isActive);
+                    },
+                  ),
+                ),
+              ],
+            ),
+            const SizedBox(height: 30),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.end,
+              children: [
+                RichText(
+                  text: TextSpan(
+                    children: [
+                      TextSpan(
+                        text: 'Dark mode ',
+                        style: TextStyle(
+                          color: Theme.of(context).colorScheme.tertiary,
+                          fontWeight: FontWeight.w400,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                Transform.scale(
+                  scale: 0.8,
+                  child: Switch(
+                    value: darkMode,
+                    onChanged: (isOn) {
+                      setState(() {
+                        darkMode = isOn;
+                      });
+                      ref.read(themeModeProvider.notifier).toggleTheme();
                     },
                   ),
                 ),
@@ -190,9 +234,12 @@ class _MyDrawerState extends ConsumerState<MyDrawer> {
                       });
                 }
               },
-              child: Text("Logout",style: TextStyle(
-                color: Theme.of(context).colorScheme.surface,
-              ),),
+              child: Text(
+                "Logout",
+                style: TextStyle(
+                  color: Theme.of(context).colorScheme.surface,
+                ),
+              ),
             ),
           ],
         ),

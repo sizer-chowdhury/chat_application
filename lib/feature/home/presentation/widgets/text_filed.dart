@@ -35,6 +35,7 @@ class _MyTextfieldState extends State<CustomTextfield> {
         obscureText: widget.obscureText ? _obscureText : false,
         controller: widget.controller,
         validator: widget.validator,
+        style: Theme.of(context).textTheme.titleMedium,
         decoration: InputDecoration(
           enabledBorder: OutlineInputBorder(
             borderSide:
