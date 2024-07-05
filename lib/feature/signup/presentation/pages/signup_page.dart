@@ -1,7 +1,7 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
 import 'package:chat_app/core/utils/user_data.dart';
+import 'package:chat_app/core/widgets/text_field.dart';
 import 'package:chat_app/feature/signup/presentation/riverpod/sign_up_controller.dart';
-import 'package:chat_app/feature/signup/presentation/widgets/my_textfield.dart';
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -155,12 +155,6 @@ class _SignUpState extends ConsumerState<SignupPage> {
                   if (value.length < 6) {
                     return 'Password must be at least 6 characters long';
                   }
-                  if (value.isNotEmpty &&
-                      _confirmPasswordController.text.isNotEmpty) {
-                    if (value != _confirmPasswordController.text) {
-                      return "Password and confirm password doesn't match";
-                    }
-                  }
                   return null;
                 },
                 autovalidateMode: AutovalidateMode.onUserInteraction,
@@ -213,7 +207,12 @@ class _SignUpState extends ConsumerState<SignupPage> {
                       ? const CircularProgressIndicator(
                           backgroundColor: Colors.white10,
                         )
-                      : Text('SignUp'),
+                      : Text(
+                          'SignUp',
+                          style: !isButtonEnable
+                              ? Theme.of(context).textTheme.titleMedium
+                              : Theme.of(context).textTheme.titleSmall,
+                        ),
                 ),
               ),
               const SizedBox(height: 25),

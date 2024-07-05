@@ -19,5 +19,9 @@ ThemeData darkMode = ThemeData(
       color: Colors.white,
       fontWeight: FontWeight.w300,
     ),
+    titleSmall: TextStyle(
+      color: Color(0xff76ABAE),
+      fontSize: 14,
+    ),
   ),
 );
