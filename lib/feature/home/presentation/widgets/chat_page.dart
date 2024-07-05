@@ -141,6 +141,7 @@ class _ChatPageState extends State<ChatPage> {
                 ),
               ],
             )),
+        backgroundColor: Theme.of(context).colorScheme.surface,
         body: Column(
           children: [
             Expanded(
