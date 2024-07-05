@@ -1,4 +1,5 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
+import 'package:chat_app/core/theme/light_mode.dart';
 import 'package:chat_app/core/theme/theme_provider.dart';
 import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/core/widgets/text_field.dart';
@@ -54,6 +55,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
   @override
   Widget build(BuildContext context) {
+    final themeMode = ref.watch(themeModeProvider);
+    final ThemeData themeData =
+        ref.read(themeModeProvider.notifier).getThemeData(themeMode);
     final state = ref.watch(loginControllerProvider);
     ref.listen(loginControllerProvider, (_, next) {
       if (next.value?.$1 == null && next.value?.$2 == null) {
@@ -84,11 +88,11 @@ class _LoginPageState extends ConsumerState<LoginPage> {
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
       appBar: AppBar(
-        title:Row(
+        title: Row(
           mainAxisAlignment: MainAxisAlignment.end,
           children: [
             IconButton(
-              icon: !darkMode
+              icon: !(themeData==lightMode)
                   ? Icon(Icons.light_mode, color: Colors.white)
                   : Icon(Icons.dark_mode, color: Colors.black),
               onPressed: () {
