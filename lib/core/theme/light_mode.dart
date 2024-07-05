@@ -18,7 +18,10 @@ ThemeData lightMode = ThemeData(
       fontSize: 14,
       color: Colors.black,
       fontWeight: FontWeight.w300,
-    )
-  )
+    ),
+    titleSmall: TextStyle(
+      color: Colors.white,
+      fontSize: 14,
+    ),
+  ),
 );
-
