@@ -15,6 +15,22 @@ class ForgetPasswordPage extends ConsumerStatefulWidget {
 class _ForgetPasswordPage extends ConsumerState<ForgetPasswordPage> {
   final TextEditingController _emailController = TextEditingController();
   final _formKey = GlobalKey<FormState>();
+  bool isButtonEnable = false;
+
+  @override
+  void initState() {
+    super.initState();
+
+    _emailController.addListener(
+      () => updateEnableButtonNotifier(),
+    );
+  }
+
+  void updateEnableButtonNotifier() {
+    setState(() {
+      isButtonEnable = _emailController.text.isNotEmpty;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -63,25 +79,27 @@ class _ForgetPasswordPage extends ConsumerState<ForgetPasswordPage> {
                 width: double.infinity,
                 padding: const EdgeInsets.only(left: 25, right: 25),
                 child: ElevatedButton(
-                  onPressed: () async {
-                    await sendPasswordResetLink(_emailController.text);
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(
-                        content: Text(
-                            'Reset password link has been sent to your email.'),
-                      ),
-                    );
-                    Navigator.pop(context);
-                  },
+                  onPressed: isButtonEnable
+                      ? () async {
+                          await sendPasswordResetLink(_emailController.text);
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            SnackBar(
+                              content: Text(
+                                  'Reset password link has been sent to your email.'),
+                            ),
+                          );
+                          Navigator.pop(context);
+                        }
+                      : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.primary,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: Text(
                     'Send Email',
-                    style: TextStyle(
-                      color: Colors.white,
-                    ),
+                    style: !isButtonEnable
+                        ? Theme.of(context).textTheme.titleMedium
+                        : Theme.of(context).textTheme.titleSmall,
                   ),
                 ),
               ),
