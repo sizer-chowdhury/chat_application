@@ -1,4 +1,5 @@
 import 'package:chat_app/core/navigation/routes/routes_name.dart';
+import 'package:chat_app/core/theme/theme_provider.dart';
 import 'package:chat_app/core/utils/user_data.dart';
 import 'package:chat_app/core/widgets/text_field.dart';
 import 'package:chat_app/feature/logIn/presentation/riverpod/login_controller.dart';
@@ -19,6 +20,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
   final _formKey = GlobalKey<FormState>();
   bool isButtonEnable = false;
   bool? enableCheckbox = false;
+  bool darkMode = false;
 
   ({
     bool email,
@@ -81,6 +83,24 @@ class _LoginPageState extends ConsumerState<LoginPage> {
 
     return Scaffold(
       backgroundColor: Theme.of(context).colorScheme.surface,
+      appBar: AppBar(
+        title:Row(
+          mainAxisAlignment: MainAxisAlignment.end,
+          children: [
+            IconButton(
+              icon: !darkMode
+                  ? Icon(Icons.light_mode, color: Colors.white)
+                  : Icon(Icons.dark_mode, color: Colors.black),
+              onPressed: () {
+                setState(() {
+                  darkMode = !darkMode;
+                });
+                ref.read(themeModeProvider.notifier).toggleTheme();
+              },
+            ),
+          ],
+        ),
+      ),
       body: Center(
         child: Form(
           key: _formKey,
@@ -215,9 +235,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         }
                       : null,
                   style: ElevatedButton.styleFrom(
-                    backgroundColor: isButtonEnable
-                        ? Theme.of(context).colorScheme.primary
-                        : Colors.red,
+                    backgroundColor: Theme.of(context).colorScheme.secondary,
                     minimumSize: const Size(double.infinity, 50),
                   ),
                   child: state.isLoading
@@ -226,7 +244,9 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                         )
                       : Text(
                           'LogIn',
-                          style: Theme.of(context).textTheme.titleMedium,
+                          style: !isButtonEnable
+                              ? Theme.of(context).textTheme.titleMedium
+                              : Theme.of(context).textTheme.titleSmall,
                         ),
                 ),
               ),
