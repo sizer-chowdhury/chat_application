@@ -8,4 +8,15 @@ ThemeData darkMode = ThemeData(
     tertiary: Color(0xffEEEEEE),
     inversePrimary: Colors.cyan,
   ),
+  textTheme: const TextTheme(
+    titleLarge: TextStyle(
+      color: Colors.white,
+      fontSize: 17,
+      fontWeight: FontWeight.w500,
+    ),
+    titleMedium: TextStyle(
+      color: Colors.white,
+      fontWeight: FontWeight.w300,
+    ),
+  ),
 );

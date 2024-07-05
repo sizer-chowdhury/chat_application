@@ -8,5 +8,16 @@ ThemeData lightMode = ThemeData(
     tertiary: Color(0xff071952),
     inversePrimary: Colors.cyan,
   ),
+  textTheme: const TextTheme(
+    titleLarge: TextStyle(
+      color: Colors.black,
+      fontSize: 17,
+      fontWeight: FontWeight.w500,
+    ),
+    titleMedium: TextStyle(
+      color: Colors.black,
+      fontWeight: FontWeight.w300,
+    )
+  )
 );
 

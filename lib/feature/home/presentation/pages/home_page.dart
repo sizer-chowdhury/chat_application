@@ -144,11 +144,7 @@ class _HomeScreenState extends State<HomePage> {
                         children: [
                           Text(
                             '${chatRoomsData[index]['receiverName']}',
-                            style: TextStyle(
-                              fontSize: 17,
-                              fontWeight: FontWeight.w500,
-                              color: Theme.of(context).colorScheme.inversePrimary,
-                            ),
+                            style: Theme.of(context).textTheme.titleLarge,
                           ),
                           SizedBox(width: 5),
                           Container(
@@ -170,11 +166,8 @@ class _HomeScreenState extends State<HomePage> {
                                   child: Text(
                                     chatRoomsData[index]['message'],
                                     maxLines: 1,
-                                    style: TextStyle(
-                                      color: Theme.of(context)
-                                          .colorScheme
-                                          .primary,
-                                    ),
+                                    style:
+                                        Theme.of(context).textTheme.titleMedium,
                                   ),
                                 ),
                                 const Spacer(),
