@@ -77,7 +77,7 @@ class _ForgetPasswordPage extends ConsumerState<ForgetPasswordPage> {
               const SizedBox(height: 25),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.only(left: 25, right: 25),
+                padding: const EdgeInsets.only(left: 30, right: 30),
                 child: ElevatedButton(
                   onPressed: isButtonEnable
                       ? () async {
