@@ -5,6 +5,9 @@ import 'package:chat_app/feature/signup/presentation/riverpod/sign_up_controller
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:sign_in_button/sign_in_button.dart';
+
+import '../../../../core/utils/google_sign_in.dart';
 
 class SignupPage extends ConsumerStatefulWidget {
   const SignupPage({super.key});
@@ -184,7 +187,7 @@ class _SignUpState extends ConsumerState<SignupPage> {
               const SizedBox(height: 25),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.only(left: 25, right: 25),
+                padding: const EdgeInsets.only(left: 30, right: 30),
                 child: ElevatedButton(
                   onPressed: (isButtonEnable)
                       ? () {
@@ -238,7 +241,56 @@ class _SignUpState extends ConsumerState<SignupPage> {
                     ),
                   ),
                 ],
-              )
+              ),
+              const SizedBox(height: 30),
+              Padding(
+                padding: const EdgeInsets.only(left: 35, right: 35),
+                child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceBetween,
+                  children: [
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    ),
+                    Text(
+                      ' OR ',
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    ),
+                    Expanded(
+                      child: Container(
+                        height: 1,
+                        color: Theme.of(context).colorScheme.tertiary,
+                      ),
+                    ),
+                  ],
+                ),
+              ),
+              const SizedBox(height: 30),
+              SizedBox(
+                height: 40,
+                width: 190,
+                child: SignInButton(
+                  Buttons.google,
+                  onPressed: () async {
+                    final userCredential =
+                        await MyGoogleSignIn().signInWithGoogle();
+                    if (userCredential != null) {
+                      final user = userCredential.user;
+                      ref
+                          .read(signUpControllerProvider.notifier)
+                          .saveGoogleUser(user: user);
+                      print(user!.photoURL);
+                      context.go(RoutesName.home);
+                    } else {
+                      print("SignIn failed!");
+                    }
+                  },
+                ),
+              ),
             ],
           ),
         ),

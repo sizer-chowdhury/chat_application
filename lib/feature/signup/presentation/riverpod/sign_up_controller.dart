@@ -19,4 +19,8 @@ class SignUpController extends _$SignUpController {
       return await ref.read(signUpUseCaseProvider).signUp(userData: userData);
     });
   }
+
+  void saveGoogleUser({required user}) {
+    ref.read(signUpUseCaseProvider).saveGoogleUser(user: user);
+  }
 }

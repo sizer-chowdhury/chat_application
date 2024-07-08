@@ -26,7 +26,7 @@ class _MyTextfieldState extends State<MyTextfield> {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 25),
+      padding: const EdgeInsets.symmetric(horizontal: 30),
       child: TextFormField(
         autovalidateMode: widget.autovalidateMode ?? AutovalidateMode.disabled,
         obscureText: widget.obscureText ? _obscureText : false,

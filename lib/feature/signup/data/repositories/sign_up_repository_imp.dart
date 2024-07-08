@@ -39,4 +39,16 @@ class SignUpRepositoryImp implements SignUpRepository {
     }
     return createdUser;
   }
+
+  @override
+  void saveGoogleUser({required user}) {
+    try {
+      signUpRemoteDataSource.saveUserInfo(
+          userMappedData: SignUpModel.toMap(user: user),
+          collection: 'users',
+          uid: user.uid);
+    } catch (e) {
+      print(e.toString());
+    }
+  }
 }
