@@ -170,7 +170,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
                 autovalidateMode: AutovalidateMode.onUserInteraction,
               ),
               Padding(
-                padding: const EdgeInsets.only(left: 30, right: 24),
+                padding: const EdgeInsets.only(left: 34, right: 24),
                 child: Row(
                   children: [
                     Row(
@@ -235,7 +235,7 @@ class _LoginPageState extends ConsumerState<LoginPage> {
               const SizedBox(height: 25),
               Container(
                 width: double.infinity,
-                padding: const EdgeInsets.only(left: 25, right: 25),
+                padding: const EdgeInsets.only(left: 30, right: 30),
                 child: ElevatedButton(
                   onPressed: (isButtonEnable)
                       ? () {
