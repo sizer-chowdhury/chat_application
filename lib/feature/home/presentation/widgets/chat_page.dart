@@ -102,7 +102,7 @@ class _ChatPageState extends State<ChatPage> {
                         ? Text(
                             'online',
                             style: TextStyle(
-                              color: Colors.green,
+                              color: Colors.green[600],
                               fontSize: 15,
                             ),
                           )
