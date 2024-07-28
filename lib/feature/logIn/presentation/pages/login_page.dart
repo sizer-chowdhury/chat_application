@@ -117,179 +117,181 @@ class _LoginPageState extends ConsumerState<LoginPage> {
         ),
       ),
       body: Center(
-        child: Form(
-          key: _formKey,
-          autovalidateMode: AutovalidateMode.disabled,
-          child: Column(
-            mainAxisAlignment: MainAxisAlignment.center,
-            children: [
-              Icon(
-                Icons.message,
-                size: 60,
-                color: Theme.of(context).colorScheme.primary,
-              ),
-              const SizedBox(height: 50),
-              Text(
-                "Welcome to our community",
-                style: TextStyle(
+        child: SingleChildScrollView(
+          child: Form(
+            key: _formKey,
+            autovalidateMode: AutovalidateMode.disabled,
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Icon(
+                  Icons.message,
+                  size: 60,
                   color: Theme.of(context).colorScheme.primary,
-                  fontSize: 16,
                 ),
-              ),
-              const SizedBox(height: 25),
-              MyTextfield(
-                hintText: 'Email',
-                obscureText: false,
-                controller: _emailController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Email is required';
-                  }
-                  if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
-                      .hasMatch(value)) {
-                    return 'Email must be an email';
-                  }
-                  return null;
-                },
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-              ),
-              const SizedBox(height: 25),
-              MyTextfield(
-                hintText: 'Password',
-                obscureText: true,
-                controller: _passwordController,
-                validator: (value) {
-                  if (value!.isEmpty) {
-                    return 'Password is required';
-                  }
-                  if (value.length < 6) {
-                    return 'Password must be at least 6 characters long';
-                  }
-                  return null;
-                },
-                autovalidateMode: AutovalidateMode.onUserInteraction,
-              ),
-              Padding(
-                padding: const EdgeInsets.only(left: 34, right: 24),
-                child: Row(
-                  children: [
-                    Row(
-                      children: [
-                        SizedBox(
-                          height: 10,
-                          width: 10,
-                          child: Checkbox(
-                            value: enableCheckbox,
-                            onChanged: (newValue) {
-                              setState(() {
-                                enableCheckbox = newValue;
-                              });
-                            },
-                            shape: RoundedRectangleBorder(
-                              borderRadius: BorderRadius.circular(6),
+                const SizedBox(height: 50),
+                Text(
+                  "Welcome to our community",
+                  style: TextStyle(
+                    color: Theme.of(context).colorScheme.primary,
+                    fontSize: 16,
+                  ),
+                ),
+                const SizedBox(height: 25),
+                MyTextfield(
+                  hintText: 'Email',
+                  obscureText: false,
+                  controller: _emailController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Email is required';
+                    }
+                    if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$')
+                        .hasMatch(value)) {
+                      return 'Email must be an email';
+                    }
+                    return null;
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                const SizedBox(height: 25),
+                MyTextfield(
+                  hintText: 'Password',
+                  obscureText: true,
+                  controller: _passwordController,
+                  validator: (value) {
+                    if (value!.isEmpty) {
+                      return 'Password is required';
+                    }
+                    if (value.length < 6) {
+                      return 'Password must be at least 6 characters long';
+                    }
+                    return null;
+                  },
+                  autovalidateMode: AutovalidateMode.onUserInteraction,
+                ),
+                Padding(
+                  padding: const EdgeInsets.only(left: 34, right: 24),
+                  child: Row(
+                    children: [
+                      Row(
+                        children: [
+                          SizedBox(
+                            height: 10,
+                            width: 10,
+                            child: Checkbox(
+                              value: enableCheckbox,
+                              onChanged: (newValue) {
+                                setState(() {
+                                  enableCheckbox = newValue;
+                                });
+                              },
+                              shape: RoundedRectangleBorder(
+                                borderRadius: BorderRadius.circular(6),
+                              ),
+                              fillColor: (enableCheckbox!)
+                                  ? WidgetStatePropertyAll(
+                                      Theme.of(context).colorScheme.primary,
+                                    )
+                                  : WidgetStatePropertyAll(
+                                      Theme.of(context)
+                                          .colorScheme
+                                          .secondary
+                                          .withOpacity(0.5),
+                                    ),
+                              side: (enableCheckbox!)
+                                  ? BorderSide(
+                                      color: Theme.of(context)
+                                          .colorScheme
+                                          .primary
+                                          .withOpacity(0.1),
+                                      width: 2,
+                                    )
+                                  : BorderSide(
+                                      color:
+                                          Theme.of(context).colorScheme.primary,
+                                      width: 2,
+                                    ),
                             ),
-                            fillColor: (enableCheckbox!)
-                                ? WidgetStatePropertyAll(
-                                    Theme.of(context).colorScheme.primary,
-                                  )
-                                : WidgetStatePropertyAll(
-                                    Theme.of(context)
-                                        .colorScheme
-                                        .secondary
-                                        .withOpacity(0.5),
-                                  ),
-                            side: (enableCheckbox!)
-                                ? BorderSide(
-                                    color: Theme.of(context)
-                                        .colorScheme
-                                        .primary
-                                        .withOpacity(0.1),
-                                    width: 2,
-                                  )
-                                : BorderSide(
-                                    color:
-                                        Theme.of(context).colorScheme.primary,
-                                    width: 2,
-                                  ),
                           ),
+                          const SizedBox(width: 7),
+                          Text(
+                            'Remember Me',
+                            style: Theme.of(context).textTheme.titleMedium,
+                          ),
+                        ],
+                      ),
+                      const Spacer(),
+                      TextButton(
+                        onPressed: () {
+                          context.push(RoutesName.forgetPassword);
+                        },
+                        child: Text(
+                          'Forget Password?',
                         ),
-                        const SizedBox(width: 7),
-                        Text(
-                          'Remember Me',
-                          style: Theme.of(context).textTheme.titleMedium,
-                        ),
-                      ],
+                      ),
+                    ],
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Container(
+                  width: double.infinity,
+                  padding: const EdgeInsets.only(left: 30, right: 30),
+                  child: ElevatedButton(
+                    onPressed: (isButtonEnable)
+                        ? () {
+                            if (_formKey.currentState!.validate()) {
+                              ref.read(loginControllerProvider.notifier).login(
+                                    UserData(
+                                      email: _emailController.text,
+                                      password: _passwordController.text,
+                                    ),
+                                  );
+                            }
+                          }
+                        : null,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Theme.of(context).colorScheme.secondary,
+                      minimumSize: const Size(double.infinity, 50),
                     ),
-                    const Spacer(),
-                    TextButton(
-                      onPressed: () {
-                        context.push(RoutesName.forgetPassword);
+                    child: state.isLoading
+                        ? const CircularProgressIndicator(
+                            backgroundColor: Colors.white10,
+                          )
+                        : Text(
+                            'LogIn',
+                            style: !isButtonEnable
+                                ? Theme.of(context).textTheme.titleMedium
+                                : Theme.of(context).textTheme.titleSmall,
+                          ),
+                  ),
+                ),
+                const SizedBox(height: 25),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      "Don't have an account? ",
+                      style: TextStyle(
+                        color: Theme.of(context).colorScheme.primary,
+                      ),
+                    ),
+                    GestureDetector(
+                      onTap: () {
+                        context.go(RoutesName.signup);
                       },
                       child: Text(
-                        'Forget Password?',
+                        "SignUp",
+                        style: TextStyle(
+                          fontWeight: FontWeight.bold,
+                          color: Theme.of(context).colorScheme.primary,
+                        ),
                       ),
                     ),
                   ],
                 ),
-              ),
-              const SizedBox(height: 25),
-              Container(
-                width: double.infinity,
-                padding: const EdgeInsets.only(left: 30, right: 30),
-                child: ElevatedButton(
-                  onPressed: (isButtonEnable)
-                      ? () {
-                          if (_formKey.currentState!.validate()) {
-                            ref.read(loginControllerProvider.notifier).login(
-                                  UserData(
-                                    email: _emailController.text,
-                                    password: _passwordController.text,
-                                  ),
-                                );
-                          }
-                        }
-                      : null,
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Theme.of(context).colorScheme.secondary,
-                    minimumSize: const Size(double.infinity, 50),
-                  ),
-                  child: state.isLoading
-                      ? const CircularProgressIndicator(
-                          backgroundColor: Colors.white10,
-                        )
-                      : Text(
-                          'LogIn',
-                          style: !isButtonEnable
-                              ? Theme.of(context).textTheme.titleMedium
-                              : Theme.of(context).textTheme.titleSmall,
-                        ),
-                ),
-              ),
-              const SizedBox(height: 25),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Text(
-                    "Don't have an account? ",
-                    style: TextStyle(
-                      color: Theme.of(context).colorScheme.primary,
-                    ),
-                  ),
-                  GestureDetector(
-                    onTap: () {
-                      context.go(RoutesName.signup);
-                    },
-                    child: Text(
-                      "SignUp",
-                      style: TextStyle(
-                        fontWeight: FontWeight.bold,
-                        color: Theme.of(context).colorScheme.primary,
-                      ),
-                    ),
-                  ),
-                ],
-              ),
-            ],
+              ],
+            ),
           ),
         ),
       ),
